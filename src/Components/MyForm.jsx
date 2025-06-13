@@ -69,7 +69,7 @@ function MyForm() {
 
   const [loading, setLoading] = useState(false);
 
- const handleAsk = async (e) => {
+const handleAsk = async (e) => {
   e.preventDefault();
   if (!question.trim()) return;
   setLoading(true);
@@ -77,16 +77,16 @@ function MyForm() {
   try {
     const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
 
-    // 🔍 Show full API response
-    console.log("✅ Raw API Response:", JSON.stringify(res.data, null, 2));
+    console.log("✅ Full API Response Object:", res);
 
-    // 🔍 Show candidate path options
-    const candidates = res.data?.candidates;
+    const rawData = res?.data;
+    console.log("✅ Raw API Response (data):", JSON.stringify(rawData, null, 2));
+
+    const candidates = rawData?.candidates;
     console.log("🔍 Candidates:", candidates);
 
-    // ✅ Extract response text (adjust if structure is different)
     const text = candidates?.[0]?.content?.parts?.[0]?.text ||
-                 candidates?.[0]?.content?.text || // try alternate path
+                 candidates?.[0]?.content?.text || 
                  "⚠️ Could not extract model response.";
 
     console.log("🧪 Extracted Text:", text);
@@ -94,7 +94,7 @@ function MyForm() {
     setHistory((prev) => [...prev, { question, answer: text }]);
     setQuestion("");
   } catch (error) {
-    console.error("❌ Error from API:", error);
+    console.error("❌ Error from API:", error?.response?.data || error.message);
     setHistory((prev) => [...prev, { question, answer: "Error getting response from API" }]);
     setQuestion("");
   } finally {
