@@ -69,26 +69,50 @@ function MyForm() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleAsk = async (e) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-    setLoading(true)
+const handleAsk = async (e) => {
+  e.preventDefault();
+  if (!question.trim()) return;
+  setLoading(true);
 
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
 
-;
-      const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from model.";
+    // ✅ Log full raw response
+    console.log("✅ Raw API Response:", JSON.stringify(res.data, null, 2));
 
-      setHistory((prev) => [...prev, { question, answer: text }]);
-      setQuestion("");
-    } catch (error) {
-      setHistory((prev) => [...prev, { question, answer: "Error getting response from API" }]);
-      setQuestion("");
-    } finally {
-    setLoading(false); 
+    // ✅ Safely access candidate text
+    const candidates = res.data?.candidates;
+    console.log("🔍 Candidates:", candidates);
+
+    let text = "⚠️ Could not extract model response.";
+    if (Array.isArray(candidates) && candidates.length > 0) {
+      const parts = candidates[0]?.content?.parts;
+      if (Array.isArray(parts) && parts.length > 0 && parts[0]?.text) {
+        text = parts[0].text;
+      }
+    }
+
+    console.log("🧪 Extracted Text:", text);
+
+    // ✅ Update chat history
+    setHistory((prev) => [...prev, { question, answer: text }]);
+    setQuestion("");
+
+  } catch (error) {
+    console.error("❌ API Error:", error);
+
+    const fallback = {
+      question,
+      answer: "❌ Error getting response from API. Please try again.",
+    };
+    setHistory((prev) => [...prev, fallback]);
+    setQuestion("");
+  } finally {
+    setLoading(false);
   }
-  };
+};
+
+
 
   const handleNewChat = () => {
     setHistory([]);
