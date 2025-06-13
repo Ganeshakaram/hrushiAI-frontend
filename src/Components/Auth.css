@@ -1,0 +1,377 @@
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.auth-container {
+   display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  position: fixed; 
+  top: 0;
+  left: 0;
+
+}
+
+.auth-card {
+background-color: rgb(22, 21, 21);
+
+
+
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 350px;
+  max-width: 90%;
+}
+
+.auth-heading {
+  font-size: 24px;
+  font-weight: 600;
+  color: #f3efef;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-heading::before {
+  content: "🔐";
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.auth-input {
+  width: 90%;
+  padding: 14px 16px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background-color: #2e2e3e;
+  color: #fff;
+  font-size: 14px;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  background: linear-gradient(to right, #ff00cc, #333399);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-button:hover {
+  opacity: 0.9;
+}
+
+.google-button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  background: #ffffff;
+  color: #000;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.google-button:hover {
+  background-color: #f0f0f0;
+}
+
+.auth-card p {
+  margin-top: 15px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.auth-card span {
+  color: #a259ff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.auth-message {
+  margin-top: 10px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.form {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 300px);
+  max-width: 800px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  gap: 1rem;
+}
+
+.input {
+  flex: 1;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.button {
+  padding: 0.8rem 1.2rem;
+  background-color: #ff7eb3;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #ff4b91;
+}
+
+.input:disabled,
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    height: auto;
+  }
+
+  .dashboard-wrapper {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 0;
+    z-index: 999;
+    background-color: rgba(28, 53, 101, 0.95); 
+    transition: width 0.3s ease, padding 0.3s ease;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sidebar.open {
+    width: 100vw;
+    padding: 1rem;
+  }
+
+  .sidebar.closed {
+    width: 0;
+    padding: 0;
+  }
+
+  .main-chat {
+    flex: 1;
+    margin-top: 70px;
+    padding: 1rem;
+    width: 100%;
+    height: calc(100vh - 70px - 80px); 
+    overflow-y: auto;
+  }
+
+  .main-header {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 70px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+  }
+
+  #h1 {
+    font-size: 1.3rem;
+    text-align: center;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  .form {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transform: none;
+    padding: 1rem;
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    max-width: 100%;
+  }
+
+  .chat-panel {
+    padding: 1rem;
+    margin-bottom: 110px; 
+    height: auto;
+  }
+
+  .chat-messages {
+    padding-bottom: 150px;
+  }
+
+  .header-right {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sidebar-toggle-btn,
+  .logout-button,
+  .theme-toggle-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .new-chat-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 1000px) {
+
+html {
+    height: auto;
+  }
+
+  .dashboard-wrapper {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 0;
+    z-index: 999;
+    background-color: rgba(28, 53, 101, 0.95); 
+    transition: width 0.3s ease, padding 0.3s ease;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sidebar.open {
+    width: 100vw;
+    padding: 1rem;
+  }
+
+  .sidebar.closed {
+    width: 0;
+    padding: 0;
+  }
+
+  .main-chat {
+    flex: 1;
+    margin-top: 70px;
+    padding: 1rem;
+    width: 100%;
+    height: calc(100vh - 70px - 80px); 
+    overflow-y: auto;
+  }
+
+  .main-header {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 70px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+  }
+
+  #h1 {
+    font-size: 1.3rem;
+    text-align: center;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  .form {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transform: none;
+    padding: 1rem;
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    max-width: 100%;
+  }
+
+  .chat-panel {
+    padding: 1rem;
+    margin-bottom: 110px; 
+    height: auto;
+  }
+
+  .chat-messages {
+    padding-bottom: 150px;
+  }
+
+  .header-right {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sidebar-toggle-btn,
+  .logout-button,
+  .theme-toggle-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .new-chat-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+}
