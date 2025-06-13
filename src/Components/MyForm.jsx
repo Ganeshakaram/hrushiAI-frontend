@@ -3,10 +3,7 @@ import axios from "axios";
 import "./MyForm.css";
 import { auth } from "../firebase";
 import Cookies from "js-cookie";
-import { signOut } from "firebase/auth";
-import { onAuthStateChanged } from "firebase/auth";
-
-
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 function MyForm() {
   const messagesEndRef = useRef(null);
@@ -15,20 +12,9 @@ function MyForm() {
       Cookies.remove("user");
       window.location.reload();
     });
-  }
+  };
 
   const [userName, setUserName] = useState("");
- useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const displayName = user.displayName || user.email || "User";
-      setUserName(displayName.split("@")[0]); 
-    }
-  });
-
-  return () => unsubscribe();
-}, []);
-
   const [darkMode, setDarkMode] = useState(() => {
     const stored = localStorage.getItem("theme");
     console.log("Loaded theme from localStorage:", stored);
@@ -43,17 +29,26 @@ function MyForm() {
 
   const [question, setQuestion] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Saving history to localStorage:", history);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const displayName = user.displayName || user.email || "User";
+        setUserName(displayName.split("@")[0]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(history));
   }, [history]);
 
   useEffect(() => {
     const theme = darkMode ? "dark" : "light";
-    console.log("Saving theme to localStorage:", theme);
     localStorage.setItem("theme", theme);
-
     document.body.classList.remove("light", "dark");
     document.body.classList.add(theme);
   }, [darkMode]);
@@ -63,138 +58,85 @@ function MyForm() {
   }, [history]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
   const toggleTheme = () => setDarkMode((prev) => !prev);
 
+  const handleAsk = async (e) => {
+    e.preventDefault();
+    if (!question.trim()) return;
+    setLoading(true);
 
-  const [loading, setLoading] = useState(false);
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
 
-const handleAsk = async (e) => {
-  e.preventDefault();
-  if (!question.trim()) return;
-  setLoading(true);
+      console.log("✅ Raw API Response:", JSON.stringify(res.data, null, 2));
+      const candidates = res.data?.candidates;
+      console.log("🔍 Candidates:", candidates);
 
-  try {
-    const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
+      const text = candidates?.[0]?.content?.parts?.[0]?.text ||
+                   candidates?.[0]?.content?.text ||
+                   "⚠️ Could not extract model response.";
 
-<<<<<<< HEAD
-    // ✅ Log full raw response
-    console.log("✅ Raw API Response:", JSON.stringify(res.data, null, 2));
+      console.log("🧪 Extracted Text:", text);
 
-    // ✅ Safely access candidate text
-    const candidates = res.data?.candidates;
-    console.log("🔍 Candidates:", candidates);
-
-    let text = "⚠️ Could not extract model response.";
-    if (Array.isArray(candidates) && candidates.length > 0) {
-      const parts = candidates[0]?.content?.parts;
-      if (Array.isArray(parts) && parts.length > 0 && parts[0]?.text) {
-        text = parts[0].text;
-      }
+      setHistory((prev) => [...prev, { question, answer: text }]);
+    } catch (error) {
+      console.error("❌ API Error:", error?.response?.data || error.message);
+      setHistory((prev) => [...prev, {
+        question,
+        answer: "❌ Error getting response from API. Please try again."
+      }]);
+    } finally {
+      setQuestion("");
+      setLoading(false);
     }
-
-    console.log("🧪 Extracted Text:", text);
-
-    // ✅ Update chat history
-    setHistory((prev) => [...prev, { question, answer: text }]);
-    setQuestion("");
-
-  } catch (error) {
-    console.error("❌ API Error:", error);
-
-    const fallback = {
-      question,
-      answer: "❌ Error getting response from API. Please try again.",
-    };
-    setHistory((prev) => [...prev, fallback]);
-=======
-    console.log("✅ Full API Response Object:", res);
-
-    const rawData = res?.data;
-    console.log("✅ Raw API Response (data):", JSON.stringify(rawData, null, 2));
-
-    const candidates = rawData?.candidates;
-    console.log("🔍 Candidates:", candidates);
-
-    const text = candidates?.[0]?.content?.parts?.[0]?.text ||
-                 candidates?.[0]?.content?.text || 
-                 "⚠️ Could not extract model response.";
-
-    console.log("🧪 Extracted Text:", text);
-
-    setHistory((prev) => [...prev, { question, answer: text }]);
-    setQuestion("");
-  } catch (error) {
-    console.error("❌ Error from API:", error?.response?.data || error.message);
-    setHistory((prev) => [...prev, { question, answer: "Error getting response from API" }]);
->>>>>>> 1d24d4fd5c90df11792a767991fc36a5fb920e17
-    setQuestion("");
-  } finally {
-    setLoading(false);
-  }
-};
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 1d24d4fd5c90df11792a767991fc36a5fb920e17
+  };
 
   const handleNewChat = () => {
     setHistory([]);
     setQuestion("");
   };
 
-
   return (
     <div className="dashboard-wrapper">
- <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
+      <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-top">
+            <div className="user-info">
+              <h3>👤 {userName}</h3>
+            </div>
+            <button className="sidebar-close-btn" onClick={toggleSidebar}>✖</button>
+          </div>
+          <button onClick={handleNewChat} className="new-chat-btn">+ New Chat</button>
+        </div>
 
+        <nav className="history-list">
+          {history.length === 0 && <p className="no-history">No chats yet. Start a new chat!</p>}
+          {history.map((item, idx) => (
+            <div key={idx} className="history-item" title={item.question}>
+              {item.question.length > 40 ? item.question.slice(0, 40) + "..." : item.question}
+            </div>
+          ))}
+        </nav>
 
- <div className="sidebar-header">
-  <div className="sidebar-top">
-    <div className="user-info">
-      <h3>👤 {userName}</h3>
-    </div>
-    <button className="sidebar-close-btn" onClick={toggleSidebar}>✖</button>
-  </div>
-  <button onClick={handleNewChat} className="new-chat-btn">+ New Chat</button>
-</div>
-
-
-  {/* Chat History Section */}
-  <nav className="history-list">
-    {history.length === 0 && <p className="no-history">No chats yet. Start a new chat!</p>}
-    {history.map((item, idx) => (
-      <div key={idx} className="history-item" title={item.question}>
-        {item.question.length > 40 ? item.question.slice(0, 40) + "..." : item.question}
-      </div>
-    ))}
-  </nav>
-
-  {/* Logout Button at Bottom */}
-  <div className="sidebar-footer">
-    <button className="auth-button logout-button" onClick={handleLogout}>
-      🔓 Logout
-    </button>
-  </div>
-</aside>
-
-
+        <div className="sidebar-footer">
+          <button className="auth-button logout-button" onClick={handleLogout}>
+            🔓 Logout
+          </button>
+        </div>
+      </aside>
 
       <main className="main-chat">
-     <header className="main-header">
-  <div className="header-left">
-    <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
-     ☰
-    </button> <span> <h2 style={{ color: "#ffffff" }}>Hrushi AI✨</h2></span>
-
-  </div>
-
-
-
-</header>
-
-
+        <header className="main-header">
+          <div className="header-left">
+            <button className="sidebar-toggle-btn" onClick={toggleSidebar}>☰</button>
+            <span><h2 style={{ color: "#ffffff" }}>Hrushi AI✨</h2></span>
+          </div>
+          <div className="header-right">
+            <button onClick={toggleTheme} className="theme-toggle-btn">
+              {darkMode ? "☀️" : "🌙"}
+            </button>
+          </div>
+        </header>
 
         <div className="chat-messages">
           {history.map((item, idx) => (
@@ -203,16 +145,10 @@ const handleAsk = async (e) => {
               <div className="message bot"><strong>Hrushi:</strong> {item.answer}</div>
             </div>
           ))}
-           {loading && (
-    <div className="message bot"><strong>Hrushi:</strong> <em>Thinking..</em></div>
-  )}
+          {loading && (
+            <div className="message bot"><strong>Hrushi:</strong> <em>Thinking..</em></div>
+          )}
           <div ref={messagesEndRef} />
-        </div>
-         <div className="header-right">
-           <button onClick={toggleTheme} className="theme-toggle-btn">
-           {darkMode ? "☀️" : "🌙"}
-          </button>
-    
         </div>
 
         <form className="form" onSubmit={handleAsk}>
