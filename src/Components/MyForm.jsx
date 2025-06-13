@@ -77,6 +77,7 @@ const handleAsk = async (e) => {
   try {
     const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
 
+<<<<<<< HEAD
     // ✅ Log full raw response
     console.log("✅ Raw API Response:", JSON.stringify(res.data, null, 2));
 
@@ -106,13 +107,37 @@ const handleAsk = async (e) => {
       answer: "❌ Error getting response from API. Please try again.",
     };
     setHistory((prev) => [...prev, fallback]);
+=======
+    console.log("✅ Full API Response Object:", res);
+
+    const rawData = res?.data;
+    console.log("✅ Raw API Response (data):", JSON.stringify(rawData, null, 2));
+
+    const candidates = rawData?.candidates;
+    console.log("🔍 Candidates:", candidates);
+
+    const text = candidates?.[0]?.content?.parts?.[0]?.text ||
+                 candidates?.[0]?.content?.text || 
+                 "⚠️ Could not extract model response.";
+
+    console.log("🧪 Extracted Text:", text);
+
+    setHistory((prev) => [...prev, { question, answer: text }]);
+    setQuestion("");
+  } catch (error) {
+    console.error("❌ Error from API:", error?.response?.data || error.message);
+    setHistory((prev) => [...prev, { question, answer: "Error getting response from API" }]);
+>>>>>>> 1d24d4fd5c90df11792a767991fc36a5fb920e17
     setQuestion("");
   } finally {
     setLoading(false);
   }
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1d24d4fd5c90df11792a767991fc36a5fb920e17
 
   const handleNewChat = () => {
     setHistory([]);
