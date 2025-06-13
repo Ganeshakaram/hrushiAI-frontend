@@ -60,36 +60,42 @@ function MyForm() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleTheme = () => setDarkMode((prev) => !prev);
 
-  const handleAsk = async (e) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-    setLoading(true);
+ const handleAsk = async (e) => {
+  e.preventDefault();
+  if (!question.trim()) return;
+  setLoading(true);
 
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
 
-      console.log("✅ Raw API Response:", JSON.stringify(res.data, null, 2));
-      const candidates = res.data?.candidates;
-      console.log("🔍 Candidates:", candidates);
+    // ✅ Log the full response for debugging
+    const data = res?.data;
+    console.log("✅ Raw API Response:", JSON.stringify(data, null, 2));
 
-      const text = candidates?.[0]?.content?.parts?.[0]?.text ||
-                   candidates?.[0]?.content?.text ||
-                   "⚠️ Could not extract model response.";
+    // ✅ Extract the answer from nested structure
+    const text =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+      "⚠️ Could not extract model response.";
 
-      console.log("🧪 Extracted Text:", text);
+    console.log("🧪 Extracted Text:", text);
 
-      setHistory((prev) => [...prev, { question, answer: text }]);
-    } catch (error) {
-      console.error("❌ API Error:", error?.response?.data || error.message);
-      setHistory((prev) => [...prev, {
+    // ✅ Add to history
+    setHistory((prev) => [...prev, { question, answer: text }]);
+  } catch (error) {
+    console.error("❌ API Error:", error?.response?.data || error.message);
+    setHistory((prev) => [
+      ...prev,
+      {
         question,
         answer: "❌ Error getting response from API. Please try again."
-      }]);
-    } finally {
-      setQuestion("");
-      setLoading(false);
-    }
-  };
+      }
+    ]);
+  } finally {
+    setQuestion("");
+    setLoading(false);
+  }
+};
+
 
   const handleNewChat = () => {
     setHistory([]);
