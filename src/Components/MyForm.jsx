@@ -76,6 +76,8 @@ function MyForm() {
 
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
+      console.log(`${import.meta.env.VITE_API_BASE}/ask`);
+
 
 ;
       const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from model.";
