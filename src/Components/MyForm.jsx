@@ -79,7 +79,8 @@ function MyForm() {
       console.log(`${import.meta.env.VITE_API_BASE}/ask`);
 
 
-;
+      console.log("Full response from backend:", res.data);
+
       const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from model.";
 
       setHistory((prev) => [...prev, { question, answer: text }]);
