@@ -4,7 +4,7 @@
 
 ## 🖼️ preview 
 ![Preview](public/preview.png)
-![Hrushi AI Login](public/Login.png)
+![Hrushi AI Login](public/login.png)
 
 ## 📌 Features
 
