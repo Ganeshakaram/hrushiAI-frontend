@@ -2,12 +2,8 @@
 
 **Hrushi AI** is a full-stack AI-powered chatbot application built using the MERN stack. It helps users interact with a smart assistant that answers questions, provides guidance, and more—all in a clean, modern UI.
 
-## 🖼️ Live Demo
-
-🔗 [Frontend (Vercel)](https://your-frontend-link.vercel.app)  
-🔗 [Backend (Render)](https://your-backend-link.onrender.com)
-
----
+## 🖼️ preview 
+![Hrushi AI Login](public/preview.png)
 
 ## 📌 Features
 
