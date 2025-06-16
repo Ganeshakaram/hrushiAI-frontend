@@ -66,20 +66,17 @@ function MyForm() {
   setLoading(true);
 
   try {
-    const res = await axios.post(`${import.meta.env.VITE_API_BASE}/ask`, { question });
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/ask`, { question });
 
-    // ✅ Log the full response for debugging
     const data = res?.data;
     console.log("✅ Raw API Response:", JSON.stringify(data, null, 2));
 
-    // ✅ Extract the answer from nested structure
     const text =
       data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
       "⚠️ Could not extract model response.";
 
     console.log("🧪 Extracted Text:", text);
 
-    // ✅ Add to history
     setHistory((prev) => [...prev, { question, answer: text }]);
   } catch (error) {
     console.error("❌ API Error:", error?.response?.data || error.message);
